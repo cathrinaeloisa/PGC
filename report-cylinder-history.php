@@ -106,16 +106,8 @@
 		<div class="pure-u-6-24"></div>
 		<div class="pure-u-17-24">
 		<!-- TITLE -->
-				
 			<div class="page-header">
 				<h1> Cylinder History Report</h1>
-				<h7> 
-					<?php
-						date_default_timezone_set('Asia/Manila');
-						$timestamp = date("F j, Y // g:i a");
-						echo '<b>' .$timestamp. '</b>';
-					?>
-				</h7>
 			</div>
 			
 			<!-- ERROR MESSAGE CONTAINER -->
@@ -130,7 +122,7 @@
 					<div class="row">
 						<div class="col">
 							<div class="form-group">
-							<label for="cylinder" class="col-sm-2 control-label"> Cylinder ID: </label>
+								<label for="cylinder" class="col-sm-2 control-label"> Cylinder ID: </label>
 								<div class="col-sm-4">
 									<input type="text" placeholder="Choose a Cylinder" class="form-control" name="cylinder" list="cylinderID"/>
 									<datalist id="cylinderID">

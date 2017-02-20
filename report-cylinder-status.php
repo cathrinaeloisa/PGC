@@ -4,10 +4,23 @@ $message = NULL;
 
 
 	session_start();
+	require_once('pentagas-connect.php');
 
-  $userType = $_SESSION['userTypeID'];
+    $userType = $_SESSION['userTypeID'];
 	if ($userType != 101) {
 		header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/index.php");
+	}
+
+	// LIST OF STATUS
+	$statusList = "SELECT * FROM CYLINDERSTATUS";
+	$result_statusList = mysqli_query($dbc, $statusList);
+
+	function getSelectedCylinders ($cylinderStatus) {
+		return $thisquery = "SELECT * FROM CYLINDERS c
+								JOIN CYLINDERSTATUS cs ON c.cylinderStatusID=cs.cylinderStatusID
+								JOIN GASTYPE gt ON c.gasID=gt.gasID
+				   			   WHERE CYLINDERSTATUSDESCRIPTION = '{$cylinderStatus}'
+				   			 	";
 	}
 
 ?>
@@ -25,6 +38,12 @@ $message = NULL;
 		<script src="CSS/jquery.min.js"></script>
 		<script src="CSS/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="CSS/bootstrap.min.css">
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	</head>
 
 	<body>
@@ -82,52 +101,94 @@ $message = NULL;
 
 			<div class="pure-u-6-24"></div>
 			<div class="pure-u-17-24">
-				<div class="content-container">
-					<!-- TITLE -->
-					<div class="page-title-container">
-						<p class="title">Daily Cylinder Status Report </p>
-					</div>
-
-					<!-- TIMESTAMP FOR REPORT-->
-					<div class="divider">
-						<?php
-							date_default_timezone_set('Asia/Manila');
-							$timestamp = date("F j, Y // g:i a");
-							echo '<b>' .$timestamp. '</b>';
-						?>
-					</div>
-
-          <?php
-          require_once('pentagas-connect.php');
-          $query = "SELECT * from cylinders c
-                        join gastype gt on c.gasID=gt.gasID
-                        join cylinderstatus cs on c.cylinderStatusID=cs.cylinderStatusID
-                " ;
-
-            $result = mysqli_query($dbc,$query);
-            echo '<table class="pure-table" id ="Table";>
-                  <thead>
-                    <th style="text-align:center">Cylinder ID</th>
-                    <th style="text-align:center">Gas</th>
-                    <th style="text-align:center">Cylinder Status</th>
-                  </thead>';
-
-
-            if(!isset($message)){
-              while($row=mysqli_fetch_array($result)){
-                $blank=" ";
-                echo "<tr class=\"pure-table-odd\">
-                <td width=\"20%\"><div align=\"center\">{$row['cylinderID']}
-                <td width=\"20%\"><div align=\"center\">{$row['gasType']} {$blank} {$row['gasName']}
-                <td width=\"20%\"><div align=\"center\">{$row['cylinderStatusDescription']}
-                </div></td>
-                </tr>";
-              }
-            }
-          ?>
-
+				<!-- TITLE -->
+				<div class="page-header">
+					<h1>Daily Cylinder Status Report</h1>
 				</div>
+
+				<!-- ERROR MESSAGE CONTAINER -->
+				<div class="error-message-container">
+					<?php
+						if (isset($message)) echo $message;
+					?>
+				</div>
+
+	        	<?php
+		        	$query = "SELECT * from cylinders c
+		                        join gastype gt on c.gasID=gt.gasID
+		                        join cylinderstatus cs on c.cylinderStatusID=cs.cylinderStatusID
+		                " ;
+
+	            	$result = mysqli_query($dbc,$query);
+	            ?>
+
+				<!-- CHOOSE STATUS CONTAINER -->
+				<form action="report-show-cylinder-status.php" method="post" class="form-horizontal" id="statusSelectionForm">
+					<div class="well well-lg">
+						<div class="form-group">
+							<label for="select-status" class="col-sm-2 control-label"> Select a Status: </label>
+							<div class="col-sm-5">
+								<input type="text" placeholder="Select a Status" class="form-control" name="select-status" list="statusList"/>
+								<datalist id="statusList">
+									<?php
+										while ($row_status=mysqli_fetch_array($result_statusList, MYSQLI_ASSOC)) {
+											echo "<option value=\"{$row_status['cylinderStatusDescription']}\">"; 
+										}
+									?>
+								</datalist>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							<center><input class="btn btn-primary" type="submit" name="show-report" value="Show Report"></center>
+						</div>
+					</div>
+				</form>
+
+				
 			</div>
 		</div>
 	</body>
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"> </script>
+	<script type="text/javascript" src="CSS/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+	<!-- FOR VALIDATION -->
+	<script type="text/javascript">
+		$(function() {
+   			// Setup form validation on the #register-form element
+	        $("#statusSelectionForm").validate({
+	            // Specify the validation rules
+	            rules: {
+	            	'select-status': "required",
+	            },
+	            highlight: function(element) {
+	                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+	            },
+	            success: removeError,
+	            // Specify the validation error messages
+	            messages: {
+	                'select-status': "Please select a status.",
+	            }
+	        });
+
+	        function removeError(element) {
+	        element.addClass('valid')
+	            .closest('.form-group')
+	            .removeClass('has-error');
+			}
+		})
+	</script>
+
+	<script> 
+	$(document).ready(function(){
+		$('#Table').DataTable({
+			paging: false,
+			searching: false,
+			ordering: false,
+		});
+	});
+	</script>
 </html>
