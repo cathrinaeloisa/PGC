@@ -137,7 +137,7 @@
 				$result = mysqli_query($dbc,$orderdetailList);
 			?>
 
-			<table id="Table">
+			<table class="cell-border table" id="Table">
 				<thead>
 					<th style="text-align:center">Customer Name</th>
 					<th style="text-align:center">Date Delivered</th>

@@ -95,14 +95,7 @@ $message = NULL;
 					</h7>
 				</div>
 
-				<?php
-					if(isset($_POST['show-report'])){
-						$_SESSION['select-status']=$_POST['select-status'];
-					}
-					else{
-						$_SESSION['select-status'] = null;
-					}			
-				
+				<?php			
 		        	require_once('pentagas-connect.php');
 		        	$query = "SELECT * from cylinders c
 		                        join gastype gt on c.gasID=gt.gasID
@@ -113,7 +106,7 @@ $message = NULL;
 	            	$result = mysqli_query($dbc,$query);
 	            ?>
 
-	           <table id ="Table";>
+	           <table class="cell-border table" id ="Table";>
 	                <thead>
 	                    <th style="text-align:center">Cylinder ID</th>
 	                    <th style="text-align:center">Gas</th>

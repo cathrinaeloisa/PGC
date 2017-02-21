@@ -9,16 +9,16 @@ $message = NULL;
 		header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/index.php");
 	}
 
-	// LIST OF STATUS
-	$statusList = "SELECT * FROM CYLINDERSTATUS";
-	$result_statusList = mysqli_query($dbc, $statusList);
+	function countCylindersOfGas ($gasID) {
+		return $query = " SELECT COUNT(c.cylinderID) AS 'cylinderCount', gt.gasID, gt.gasType, gt.gasName
+							FROM cylinders c JOIN gasType gt ON c.gasID = gt.gasID
+						   WHERE c.cylinderStatusID = 401
+                             AND gt.gasID = '{$gasID}'";
+	}
 
-	function getSelectedCylinders ($cylinderStatus) {
-		return $thisquery = "SELECT * FROM CYLINDERS c
-								JOIN CYLINDERSTATUS cs ON c.cylinderStatusID=cs.cylinderStatusID
-								JOIN GASTYPE gt ON c.gasID=gt.gasID
-				   			   WHERE CYLINDERSTATUSDESCRIPTION = '{$cylinderStatus}'
-				   			 	";
+	function getGas () {
+		return $query = " SELECT gasID
+							FROM gasType";
 	}
 
 ?>
@@ -104,36 +104,25 @@ $message = NULL;
 					</div>
 	
 					<!-- CODE FOR INVENTORY TABLE -->
-					<table id ="Table">
+					<table class="cell-border table" id ="Table">
 						<thead>
-							<th style="text-align:center">Cylinder ID</th>
-            				<th style="text-align:center">Gas</th>
-            				<th style="text-align:center">Date Acquired</th>	
+							<th style="text-align:center">Gas Name</th>
+            				<th style="text-align:center">Number of Cylinders Available</th>
 						</thead>
 
-					<?php
-						echo '';
-
-						if (!isset($message) && isset($_SESSION['select-status'])) {
-						
-							$cylinderStatus = $_SESSION['select-status'];
-							$selected_list = mysqli_query($dbc, getSelectedCylinders($cylinderStatus));
-							echo "<h3> $cylinderStatus Cylinders </h3>";
-
-							while ($row_selected = mysqli_fetch_array($selected_list,MYSQL_ASSOC)) {
-																	
-								echo "<tr>
-									<td width=\"20%\"><div align=\"center\">{$row_selected['cylinderID']}
-	                				<td width=\"20%\"><div align=\"center\">{$row_selected['gasType']}{$row_selected['gasName']}
-									<td width=\"20%\"><div align=\"center\">{$row_selected['dateAcquired']}
-									
-									</div></td>
-
-									</tr>";
+						<?php
+							$gasResult = mysqli_query($dbc, getGas());
+							while ($gasRow =  mysqli_fetch_array($gasResult,MYSQL_ASSOC)) {
+								$countResult = mysqli_query($dbc, countCylindersOfGas($gasRow['gasID']));
+								while ($countRow = mysqli_fetch_array($countResult,MYSQL_ASSOC))
+									echo "<tr>
+											<td width=\"20%\"><div align=\"center\">{$countRow['gasType']} {$countRow['gasName']}</td>
+			                				<td width=\"20%\"><div align=\"center\">{$countRow['cylinderCount']}</td>
+										   </tr>";
 							}
-						}
-					?>
+						?>
 					</table>
+
 					<br>
 					<br>
 					<center><b>*** END OF REPORT ***</b></center>
