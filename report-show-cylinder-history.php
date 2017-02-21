@@ -33,18 +33,10 @@
 	<link rel="stylesheet" href="CSS/dashboard.css" >
 	<link rel="stylesheet" type="text/css" href="CSS/pure-release-0.6.0/pure-min.css">
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></link>
-
-	<script src="jquery.min.js"></script>
-	<script src="bootstrap.min.js"></script>
 	<link rel="stylesheet" href="CSS/bootstrap.min.css">
 
-	<link rel="stylesheet" href="CSS/miggy.css">
-
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="CSS/jquery.min.js"></script>
+	<script src="CSS/bootstrap.min.js"></script>
 
 </head>
 <body>
@@ -149,14 +141,13 @@
 
 					<?php
 						if(isset($_POST['showReport'])){
-								while($row=mysqli_fetch_array($result)){
-									echo "<tr>
-									<td width=\"20%\"><div align=\"center\">{$row['name']}
-									<td width=\"20%\"><div align=\"center\">{$row['deliveryDate']}
-									<td width=\"20%\"><div align=\"center\">{$row['pickedupdate']}
-									</div></td>
-									</tr>";
-								}
+							while($row=mysqli_fetch_array($result)){
+								echo "<tr>
+								<td width=\"20%\" style=\"text-align:center\">{$row['name']}</td>
+								<td width=\"20%\" style=\"text-align:center\">{$row['deliveryDate']}</td>
+								<td width=\"20%\" style=\"text-align:center\">{$row['pickedupdate']}</td>
+								</tr>";
+							}
 						}
 					?>
 				</table>

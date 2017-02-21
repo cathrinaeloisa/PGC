@@ -43,8 +43,6 @@ $message = NULL;
 		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></link>
 		<link rel="stylesheet" href="CSS/bootstrap.min.css">
 
-		<script src="https://code.highcharts.com/highcharts.js"></script>
-		<script src="https://code.highcharts.com/modules/exporting.js"></script>
 		<script src="CSS/jquery.min.js"></script>
 		<script src="CSS/bootstrap.min.js"></script>
 	</head>
@@ -103,13 +101,6 @@ $message = NULL;
 							echo "<b>".$timestamp."<b>";
 						?>
 					</h7>
-				</div>
-
-				<!-- ERROR MESSAGE CONTAINER -->
-				<div class="error-message-container">
-					<?php
-						if (isset($message)) echo $message;
-					?>
 				</div>
 
 				<!-- DATE RANGE CONTAINER -->

@@ -66,32 +66,13 @@ $message = NULL;
 	<head>
 		<title>Sales - Sales and Marketing </title>
 		<link rel="stylesheet" href="CSS/dashboard.css" >
-		<link rel="stylesheet" href="CSS/bootstrap-dashboard-edit.css" >
 		<link rel="stylesheet" type="text/css" href="CSS/pure-release-0.6.0/pure-min.css">
 		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></link>
 		<link rel="stylesheet" href="CSS/bootstrap.min.css">
 
-		<script src="https://code.highcharts.com/highcharts.js"></script>
-		<script src="https://code.highcharts.com/modules/exporting.js"></script>
 		<script src="CSS/jquery.min.js"></script>
 		<script src="CSS/bootstrap.min.js"></script>
 	</head>
-		<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"> </script>
-		<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-		
-		<script> 
-		$(document).ready(function(){
-			$('#table').DataTable({
-				"paging": false,
-				"ordering": false,
-				"info": false,
-				"searching": false,	
-			});
-
-		});
-		</script>
-		
-		
 	
 	<body>
 		<div class="pure-g">
@@ -153,13 +134,12 @@ $message = NULL;
 					<div class="row">
 						<table class="table table-bordered table-striped">
 							<thead> 
-								<th align="center">Order ID</th>
-								<th align="center">Customer Name</th>
-								<th align="center">Order Date</th>
-								<th align="right">Total Sales</th>
+								<th style="text-align:center">Order ID</th>
+								<th style="text-align:center">Customer Name</th>
+								<th style="text-align:center">Order Date</th>
+								<th style="text-align:center">Total Sales</th>
 							</thead>
 							<?php 
-								$sum = null;
 								if(!isset($message) && isset($_SESSION['enddate']) && isset($_SESSION['startdate'])){	
 									$totalSales = 0;
 									$orderRangeQueryResult = mysqli_query($dbc,getOrdersFromDateRange($_SESSION['startdate'], $_SESSION['enddate'])); //GETTING ORDERS FROM SPECIFIED DATE RANGE

@@ -46,7 +46,6 @@
 	<head>
 		<title>Sales - Sales and Marketing </title>
 		<link rel="stylesheet" href="CSS/dashboard.css" >
-		<link rel="stylesheet" href="CSS/bootstrap-dashboard-edit.css" >
 		<link rel="stylesheet" type="text/css" href="CSS/pure-release-0.6.0/pure-min.css">
 		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></link>
 		<link rel="stylesheet" href="CSS/bootstrap.min.css">
@@ -129,10 +128,10 @@
 					<div class="row">
 						<table id ="table" class="table table-bordered table-striped">
 							<thead> 
-								<th align="center">Gas Ordered</th>
-								<th align="center">Qty. of Cylinders</th>
-								<th align="center">Unit Price</th>
-								<th align="center">Total Price</th>
+								<th style="text-align:center">Gas Ordered</th>
+								<th style="text-align:center">Qty. of Cylinders</th>
+								<th style="text-align:center">Unit Price</th>
+								<th style="text-align:center">Total Price</th>
 
 							</thead>
 							<?php	  
@@ -155,7 +154,7 @@
 
 											echo "<tr>
 													<td width='50%' align='center'>{$ordersRow['gasType']} {$ordersRow['gasName']}</td>
-													<td width='15%' align='center'>{$ordersRow['quantity']}</td> 
+													<td width='20%' align='center'>{$ordersRow['quantity']}</td> 
 													<td align='right'>{$detailsRow['price']}</td>
 													<td align='right'>{$totalPriceFormatted}</td>
 												 </tr>";
