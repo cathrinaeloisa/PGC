@@ -102,12 +102,15 @@
 							<ul class="dropdown">
 							<?php
 								if ($userType == 101) {
-									echo '<li>
-											<a href="report-inventory.php" class="pure-menu-link"> Inventory Report</a>
-										</li>
-										<li>
-											<a href="report-cylinder-status.php" class="pure-menu-link"> Cylinder Status Report</a>
-										</li>';
+									echo '	<li>
+												<a href="report-inventory.php" class="pure-menu-link"> Inventory Report</a>
+											</li>
+											<li>
+												<a href="report-cylinder-history.php" class="pure-menu-link">Cylinder History Report</a>
+											</li>
+							                <li>
+							                  <a href="report-cylinder-status.php" class="pure-menu-link">Daily Cylinder Status Report</a>
+							                </li>';
 
 								}
 								else if ($userType == 102) {

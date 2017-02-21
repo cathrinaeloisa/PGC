@@ -136,20 +136,22 @@ $message = NULL;
 
 			<div class="pure-u-6-24"></div>
 			<div class="pure-u-17-24">
-				<div class="content-container">
 					<div class="row">
-						<div class="col">
-							<ol class="breadcrumb">
-							  <li><a href="report-sales.php">Back</a></li>
-							  <li class="active">Sales Report for <?php echo $_SESSION['startdate'].' to '.$_SESSION['enddate'];?> </li>
-							</ol>
+						<div class="page-header">
+							<h1>Sales Report for <?php echo $_SESSION['startdate'].' to '.$_SESSION['enddate'];?></h1>
+							<h7> 
+								<?php
+									date_default_timezone_set('Asia/Manila');
+									$timestamp = date("F j, Y // g:i a");
+									echo 'Generated: &nbsp&nbsp <b>' .$timestamp. '</b>';
+								?>
+							</h7>
 						</div>
 					</div>
-
 						
 
-					<div>
-						<table id="table" class="table cell-border stripe" width="100%">
+					<div class="row">
+						<table class="table table-bordered table-striped">
 							<thead> 
 								<th align="center">Order ID</th>
 								<th align="center">Customer Name</th>
@@ -172,13 +174,18 @@ $message = NULL;
 											$totalSales += $sum;
 
 										}
+
+										$sumFormatted = number_format($sum,2);
 										echo "<tr>
-												<td align=\"center\"><a href='sales-details.php?IDHold={$orders['orderID']}'>".$orders['orderID']."</td>
+												<td align=\"center\"><a href='sales-details.php?orderID={$orders['orderID']}'>".$orders['orderID']."</td>
 												<td align=\"center\">{$orders['name']}</td>
 												<td align=\"center\">{$orders['orderDate']}</td>
-												<td align=\"right\">{$sum}</td>
+												<td align=\"right\">{$sumFormatted}</td>
 												</tr>";				
 									}
+
+									$totalSales = number_format($totalSales, 2);
+
 									echo " 	<tr>
 												<td></td>
 												<td></td>
@@ -188,10 +195,20 @@ $message = NULL;
 								}
 							?>
 						</table>
+						<br>
+						<br>
+						<center><b>*** END OF REPORT ***</b></center>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
 					</div>
 				
 				</div>
-			</div>
 
 		</div>
 	</body>

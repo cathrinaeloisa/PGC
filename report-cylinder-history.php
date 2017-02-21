@@ -105,46 +105,43 @@
 
 		<div class="pure-u-6-24"></div>
 		<div class="pure-u-17-24">
-		<!-- TITLE -->
-			<div class="page-header">
-				<h1> Cylinder History Report</h1>
+			<!-- TITLE -->
+			<div class="row">
+				<div class="page-header">
+					<h1> Cylinder History Report</h1>
+				</div>
 			</div>
 			
-			<!-- ERROR MESSAGE CONTAINER -->
-			<div class="error-message-container">
-				<?php
-					if (isset($message)) echo $message;
-				?>
-			</div>
-		
-			<form action="report-show-cylinder-history.php" method="post" class="form-horizontal" id="cylinderSelectionForm">
-				<div class="well well-lg">
-					<div class="row">
-						<div class="col">
-							<div class="form-group">
-								<label for="cylinder" class="col-sm-2 control-label"> Cylinder ID: </label>
-								<div class="col-sm-4">
-									<input type="text" placeholder="Choose a Cylinder" class="form-control" name="cylinder" list="cylinderID"/>
-									<datalist id="cylinderID">
-										<?php
-											while ($row_cylinders=mysqli_fetch_array($result_cylinderList, MYSQLI_ASSOC)) {
-													 echo "<option value=\"{$row_cylinders['cylinderID']}\">";
-											}
-										?>
-									</datalist>
+			<div class="row">
+				<form action="report-show-cylinder-history.php" method="post" class="form-horizontal" id="cylinderSelectionForm">
+					<div class="well well-lg">
+						<div class="row">
+							<div class="col">
+								<div class="form-group">
+									<label for="cylinder" class="col-sm-2 control-label"> Cylinder ID: </label>
+									<div class="col-sm-4">
+										<input type="text" placeholder="Choose a Cylinder" class="form-control" name="cylinder" list="cylinderID"/>
+										<datalist id="cylinderID">
+											<?php
+												while ($row_cylinders=mysqli_fetch_array($result_cylinderList, MYSQLI_ASSOC)) {
+														 echo "<option value=\"{$row_cylinders['cylinderID']}\">";
+												}
+											?>
+										</datalist>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="row">
-					<div class="col">
-						<center><input class="btn btn-primary" type="submit" name="showReport" value="Show Report"></center>
+					<div class="row">
+						<div class="col">
+							<center><input class="btn btn-primary" type="submit" name="showReport" value="Show Report"></center>
+						</div>
 					</div>
-				</div>
 
-			</form>
+				</form>
+			</div>
 	</div>
 </div>
 </body>
@@ -161,6 +158,7 @@
 	            rules: {
 	            	cylinder: "required",
 	            },
+	            
 	            highlight: function(element) {
 	                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
 	            },

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 17, 2017 at 03:27 PM
+-- Generation Time: Feb 21, 2017 at 10:04 AM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 5.6.24
 
@@ -55,6 +55,21 @@ CREATE TABLE `cylinderrefillaudit` (
   `refillAuditID` varchar(10) CHARACTER SET latin1 NOT NULL,
   `cylinderID` varchar(7) NOT NULL,
   `date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cylinderrequest`
+--
+
+CREATE TABLE `cylinderrequest` (
+  `requestID` int(5) NOT NULL,
+  `orderID` varchar(11) NOT NULL,
+  `gasID` varchar(6) NOT NULL,
+  `quantity` int(3) NOT NULL,
+  `isCompleted` tinyint(4) NOT NULL,
+  `requestedBy` int(7) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -130,7 +145,8 @@ INSERT INTO `cylinderstatus` (`cylinderStatusID`, `cylinderStatusDescription`) V
 (405, 'Repaired'),
 (406, 'Dispatched'),
 (407, 'No Longer In Use'),
-(408, 'Lost');
+(408, 'Lost'),
+(409, 'Reserved');
 
 -- --------------------------------------------------------
 
@@ -295,8 +311,10 @@ CREATE TABLE `orderstatus` (
 
 INSERT INTO `orderstatus` (`orderStatusID`, `orderStatusDescription`) VALUES
 (801, 'Completed'),
-(802, 'In Process'),
-(803, 'Cancelled');
+(802, 'Processing Orders'),
+(803, 'Cancelled'),
+(804, 'Pending'),
+(805, 'Waiting for Dispatching');
 
 -- --------------------------------------------------------
 
@@ -365,6 +383,15 @@ ALTER TABLE `customers`
 ALTER TABLE `cylinderrefillaudit`
   ADD PRIMARY KEY (`refillAuditID`),
   ADD KEY `cylinderID` (`cylinderID`);
+
+--
+-- Indexes for table `cylinderrequest`
+--
+ALTER TABLE `cylinderrequest`
+  ADD PRIMARY KEY (`requestID`),
+  ADD KEY `fk_cylinderrequest01_idx` (`orderID`),
+  ADD KEY `fk_cylinderrequest02_idx` (`gasID`),
+  ADD KEY `fk_cylinderrequest03_idx` (`requestedBy`);
 
 --
 -- Indexes for table `cylinders`
@@ -462,6 +489,14 @@ ALTER TABLE `useraccounts`
 --
 ALTER TABLE `cylinderrefillaudit`
   ADD CONSTRAINT `fk_cylinders02` FOREIGN KEY (`cylinderID`) REFERENCES `cylinders` (`cylinderID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `cylinderrequest`
+--
+ALTER TABLE `cylinderrequest`
+  ADD CONSTRAINT `fk_cylinderrequest01` FOREIGN KEY (`orderID`) REFERENCES `orders` (`orderID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_cylinderrequest02` FOREIGN KEY (`gasID`) REFERENCES `gastype` (`gasID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_cylinderrequest03` FOREIGN KEY (`requestedBy`) REFERENCES `orders` (`userID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `cylinders`

@@ -102,15 +102,10 @@ $message = NULL;
 			<div class="pure-u-6-24"></div>
 			<div class="pure-u-17-24">
 				<!-- TITLE -->
-				<div class="page-header">
-					<h1>Daily Cylinder Status Report</h1>
-				</div>
-
-				<!-- ERROR MESSAGE CONTAINER -->
-				<div class="error-message-container">
-					<?php
-						if (isset($message)) echo $message;
-					?>
+				<div class="row">
+					<div class="page-header">
+						<h1>Daily Cylinder Status Report</h1>
+					</div>
 				</div>
 
 	        	<?php
@@ -123,30 +118,31 @@ $message = NULL;
 	            ?>
 
 				<!-- CHOOSE STATUS CONTAINER -->
-				<form action="report-show-cylinder-status.php" method="post" class="form-horizontal" id="statusSelectionForm">
-					<div class="well well-lg">
-						<div class="form-group">
-							<label for="select-status" class="col-sm-2 control-label"> Select a Status: </label>
-							<div class="col-sm-5">
-								<input type="text" placeholder="Select a Status" class="form-control" name="select-status" list="statusList"/>
-								<datalist id="statusList">
-									<?php
-										while ($row_status=mysqli_fetch_array($result_statusList, MYSQLI_ASSOC)) {
-											echo "<option value=\"{$row_status['cylinderStatusDescription']}\">"; 
-										}
-									?>
-								</datalist>
+				<div class="row">
+					<form action="report-show-cylinder-status.php" method="post" class="form-horizontal" id="statusSelectionForm">
+						<div class="well well-lg">
+							<div class="form-group">
+								<label for="select-status" class="col-sm-2 control-label"> Select a Status: </label>
+								<div class="col-sm-5">
+									<input type="text" placeholder="Select a Status" class="form-control" name="select-status" list="statusList"/>
+									<datalist id="statusList">
+										<?php
+											while ($row_status=mysqli_fetch_array($result_statusList, MYSQLI_ASSOC)) {
+												echo "<option value=\"{$row_status['cylinderStatusDescription']}\">"; 
+											}
+										?>
+									</datalist>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col">
-							<center><input class="btn btn-primary" type="submit" name="show-report" value="Show Report"></center>
+						<div class="row">
+							<div class="col">
+								<center><input class="btn btn-primary" type="submit" name="show-report" value="Show Report"></center>
+							</div>
 						</div>
-					</div>
-				</form>
-
-				
+					</form>
+				</div>
+					
 			</div>
 		</div>
 	</body>

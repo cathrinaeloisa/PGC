@@ -48,22 +48,6 @@ $message = NULL;
 		<script src="CSS/jquery.min.js"></script>
 		<script src="CSS/bootstrap.min.js"></script>
 	</head>
-		<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"> </script>
-		<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-		
-		<script> 
-		$(document).ready(function(){
-			$('#table').DataTable({
-				"paging": false,
-				"ordering": false,
-				"info": false,
-				"searching": false,	
-			});
-
-		});
-		</script>
-		
-		
 	
 	<body>
 		<div class="pure-g">
@@ -130,17 +114,17 @@ $message = NULL;
 
 				<!-- DATE RANGE CONTAINER -->
 				<div class="well" id="dateSpace">
-					<form action="report-show-sales.php" method="post" class="form-horizontal">
+					<form action="report-show-sales.php" method="post" class="form-horizontal" id="dateRange">
 						<div class="form-group">
 							<label for="startdate" class="col-sm-2 control-label"> Start Date: </label>
 							<div class="col-sm-3">
-								<input type="date" name="startdate" value ="<?php if (isset($_POST['startdate'])) echo $_POST['startdate']; ?>" class="form-control">
+								<input type="date" name="startdate" id="startdate" value ="<?php if (isset($_POST['startdate'])) echo $_POST['startdate']; ?>" class="form-control">
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="enddate"  class="col-sm-2 control-label"> End Date: </label>
 							<div class="col-sm-3">
-								<input type="date" name="enddate" value ="<?php if (isset($_POST['enddate'])) echo $_POST['enddate']; ?>" class="form-control">
+								<input type="date" name="enddate" id="enddate" value ="<?php if (isset($_POST['enddate'])) echo $_POST['enddate']; ?>" class="form-control">
 							</div>
 						</div>
 
@@ -155,4 +139,52 @@ $message = NULL;
 			</div>
 		</div>
 	</body>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"> </script>
+	<script type="text/javascript" src="CSS/jquery.validate.min.js"></script>
+
+	<!-- FOR VALIDATION -->
+	<script type="text/javascript">
+		jQuery.validator.addMethod("isValid", function (value, element) {
+		    var startDate = $('#startdate').val();
+		    var finDate = $('#enddate').val();
+		    return Date.parse(startDate) < Date.parse(finDate);
+		}, "* End date must be after start date");
+
+		$(function() {
+   			// Setup form validation on the #register-form element
+	        $("#dateRange").validate({
+	            // Specify the validation rules
+	            rules: {
+	            	startdate: {
+	            		required: true,
+	            	},
+	            	enddate: {
+	            		required: true,
+	            		isValid: true,
+	            	},
+	            },
+	            
+	            highlight: function(element) {
+	                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+	            },
+	            success: removeError,
+	            // Specify the validation error messages
+	            messages: {
+	                startdate: {
+	                	required: "This is a required field.",
+	                },
+	                enddate: {
+	                	required: "This is a required field.",
+	                	isValid: "End date must be after start date",
+	                },
+	            }
+	        });
+
+	        function removeError(element) {
+	        element.addClass('valid')
+	            .closest('.form-group')
+	            .removeClass('has-error');
+			}
+		})
+	</script>
 </html>

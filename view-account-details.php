@@ -145,13 +145,10 @@
 							}
 						?>
 
-						<!-- PRODUCTION GASES AND CYLINDERS LINK  -->
+						<!-- PRODUCTION CYLINDERS LINK  -->
 						<?php
 							if ($userType == 106) {
-								echo ' <li>
-											<a href="view-gases-production.php" class="pure-menu-link">Gases</a>
-										</li>
-										<li>
+								echo '  <li>
 											<a href="refill-cylinder.php" class="pure-menu-link"> Cylinders</a>
 										</li>';
 							}
@@ -169,7 +166,7 @@
 													<a href="report-inventory.php" class="pure-menu-link"> Inventory Report</a>
 												</li>
 												<li>
-													<a href="report-cylinder-history.php" class="pure-menu-link highlighter">Cylinder History Report</a>
+													<a href="report-cylinder-history.php" class="pure-menu-link">Cylinder History Report</a>
 												</li>
 								                <li>
 								                  <a href="report-cylinder-status.php" class="pure-menu-link">Daily Cylinder Status Report</a>

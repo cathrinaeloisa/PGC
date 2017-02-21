@@ -105,17 +105,19 @@
 		<div class="pure-u-6-24"></div>
 		<div class="pure-u-17-24">
 			<!-- TITLE -->
-			<div class="page-header">
-				<h1>Cylinder History Report</h1>
-				<h7> 
-					<?php
-						date_default_timezone_set('Asia/Manila');
-						$timestamp = date("F j, Y // g:i a");
-						echo '<b>' .$timestamp. '</b>';
-					?>
-				</h7>
-			</div>
 
+			<div class="row">
+				<div class="page-header">
+					<h1>Cylinder History Report</h1>
+					<h7> 
+						<?php
+							date_default_timezone_set('Asia/Manila');
+							$timestamp = date("F j, Y // g:i a");
+							echo '<b>' .$timestamp. '</b>';
+						?>
+					</h7>
+				</div>
+			</div>
 			
 
 			<?php
@@ -137,37 +139,39 @@
 				$result = mysqli_query($dbc,$orderdetailList);
 			?>
 
-			<table class="cell-border table" id="Table">
-				<thead>
-					<th style="text-align:center">Customer Name</th>
-					<th style="text-align:center">Date Delivered</th>
-					<th style="text-align:center">Date Picked Up</th>
-				</thead>
+			<div class="row">
+				<table class="table table-bordered table-striped" id="Table">
+					<thead>
+						<th style="text-align:center">Customer Name</th>
+						<th style="text-align:center">Date Delivered</th>
+						<th style="text-align:center">Date Picked Up</th>
+					</thead>
 
-				<?php
-					if(isset($_POST['showReport'])){
-							while($row=mysqli_fetch_array($result)){
-								echo "<tr>
-								<td width=\"20%\"><div align=\"center\">{$row['name']}
-								<td width=\"20%\"><div align=\"center\">{$row['deliveryDate']}
-								<td width=\"20%\"><div align=\"center\">{$row['pickedupdate']}
-								</div></td>
-								</tr>";
-							}
-					}
-				?>
-			</table>
-			<br>
-			<br>
-			<center><b>*** END OF REPORT ***</b></center>
-			<br>
-			<br>
-			<br>
-			<br>
-			<br>
-			<br>
-			<br>
-			<br>
+					<?php
+						if(isset($_POST['showReport'])){
+								while($row=mysqli_fetch_array($result)){
+									echo "<tr>
+									<td width=\"20%\"><div align=\"center\">{$row['name']}
+									<td width=\"20%\"><div align=\"center\">{$row['deliveryDate']}
+									<td width=\"20%\"><div align=\"center\">{$row['pickedupdate']}
+									</div></td>
+									</tr>";
+								}
+						}
+					?>
+				</table>
+				<br>
+				<br>
+				<center><b>*** END OF REPORT ***</b></center>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+			</div>
 	</div>
 </div>
 </body>

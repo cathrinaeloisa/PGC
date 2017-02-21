@@ -71,9 +71,6 @@
 							<a href="view-account-details.php" class="pure-menu-link"> Account </a>
 						</li>
 						<li>
-							<a href="view-gases-production.php" class="pure-menu-link">Gases</a>
-						</li>
-						<li>
 							<a href="refill-cylinders.php" class="pure-menu-link highlighter"> Cylinders</a>
 						</li>
 
@@ -107,7 +104,7 @@
 							<table class="hover stripe cell-border" id="Table">
 								<thead>
 									<tr>
-										<th> </th>
+										<th style="text-align:center"><input type="checkbox" name="select-all" id="select-all"></th>
 										<th style="text-align:center !important; font-size:15"> Cylinder Number </th>
 										<th style="text-align:center !important; font-size:15"> Gas Name </th>
 										<th style="text-align:center !important; font-size:15"> Last Received From </th>
@@ -156,6 +153,15 @@
 			      "targets"  : [0],
 			      "orderable": false,
 				}]
+			});
+
+			$('#select-all').click(function(event) {   
+			    if(this.checked) {
+			        // Iterate each checkbox
+			        $(':checkbox').each(function() {
+			            this.checked = true;                        
+			        });
+			    }
 			});
 		</script>
 	</body>

@@ -63,8 +63,11 @@
 									<a href="report-inventory.php" class="pure-menu-link"> Inventory Report</a>
 								</li>
 								<li>
-									<a href="report-cylinder-status.php" class="pure-menu-link"> Cylinder Status Report</a>
+									<a href="report-cylinder-history.php" class="pure-menu-link">Cylinder History Report</a>
 								</li>
+				                <li>
+				                  <a href="report-cylinder-status.php" class="pure-menu-link">Daily Cylinder Status Report</a>
+				                </li>
 							</ul>
 						</li>
 						<li>
@@ -80,7 +83,7 @@
 					<div class="row margin-edit-for-top-page">
 				 		<div class="col">
 				 			<div class="page-header page-header-edit">
-							  WELCOME	
+								<h1><small>WELCOME</small></h1>
 							</div>
 				 		</div>	
 					</div>

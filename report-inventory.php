@@ -9,11 +9,19 @@ $message = NULL;
 		header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/index.php");
 	}
 
-	function countCylindersOfGas ($gasID) {
+	function statusCountCylindersOfGas ($gasID, $statusID) {
 		return $query = " SELECT COUNT(c.cylinderID) AS 'cylinderCount', gt.gasID, gt.gasType, gt.gasName
 							FROM cylinders c JOIN gasType gt ON c.gasID = gt.gasID
-						   WHERE c.cylinderStatusID = 401
+						   WHERE c.cylinderStatusID = $statusID
                              AND gt.gasID = '{$gasID}'";
+	}
+
+	function countTotalCylindersOfGas ($gasID) {
+		return $query = " SELECT COUNT(c.cylinderID) AS 'cylinderCount'
+							FROM cylinders c JOIN gasType gt ON c.gasID = gt.gasID
+						   WHERE gt.gasID = '{$gasID}'
+                             AND c.cylinderStatusID != 407
+                             AND c.cylinderStatusID != 408";
 	}
 
 	function getGas () {
@@ -90,51 +98,85 @@ $message = NULL;
 
 		<div class="pure-u-6-24"></div>
 			<div class="pure-u-17-24">
-				<div class="content-container">
 					
-					<div class="page-header">
-						<h1> Daily Cylinder Inventory Report</h1>
-						<h7> 
-							<?php
-								date_default_timezone_set('Asia/Manila');
-								$timestamp = date("F j, Y // g:i a");
-								echo '<b>' .$timestamp. '</b>';
-							?>
-						</h7>
+					<div class="row">
+						<div class="page-header">
+							<h1> Daily Cylinder Inventory Report</h1>
+							<h7> 
+								<?php
+									date_default_timezone_set('Asia/Manila');
+									$timestamp = date("F j, Y // g:i a");
+									echo '<b>' .$timestamp. '</b>';
+								?>
+							</h7>
+						</div>
 					</div>
-	
+
 					<!-- CODE FOR INVENTORY TABLE -->
-					<table class="cell-border table" id ="Table">
-						<thead>
-							<th style="text-align:center">Gas Name</th>
-            				<th style="text-align:center">Number of Cylinders Available</th>
-						</thead>
+					<div class="row">
+						<table class="table table-bordered table-striped" id ="Table">
+							<thead>
+								<th style="text-align:center; font-size:13">Gas Name</th>
+	            				<th style="text-align:center; font-size:13">Qty. Available</th>
+	            				<th style="text-align:center; font-size:13">Qty. Dispatched</th>
+	            				<th style="text-align:center; font-size:13">Qty. Empty</th>
+	            				<th style="text-align:center; font-size:13">Qty. Damaged</th>
+	            				<th style="text-align:center; font-size:13">Qty. In Repair</th>
 
-						<?php
-							$gasResult = mysqli_query($dbc, getGas());
-							while ($gasRow =  mysqli_fetch_array($gasResult,MYSQL_ASSOC)) {
-								$countResult = mysqli_query($dbc, countCylindersOfGas($gasRow['gasID']));
-								while ($countRow = mysqli_fetch_array($countResult,MYSQL_ASSOC))
+								<th style="text-align:center; font-size:13">Total Cylinders</th>
+
+							</thead>
+
+							<?php
+								$gasResult = mysqli_query($dbc, getGas());
+								while ($gasRow =  mysqli_fetch_array($gasResult,MYSQL_ASSOC)) {
+									$availableCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 401));
+									$reservedCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 409));
+
+									$dispatchedCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 406));
+									$emptyCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 402));
+									$damagedCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 403));
+									$inRepairCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 404));
+
+									$totalCountResult = mysqli_query($dbc, countTotalCylindersOfGas($gasRow['gasID']));
+
+									$availableCountRow = mysqli_fetch_array($availableCountResult,MYSQL_ASSOC);
+									$reservedCountRow = mysqli_fetch_array($reservedCountResult,MYSQL_ASSOC);
+
+									$dispatchedCountRow = mysqli_fetch_array($dispatchedCountResult,MYSQL_ASSOC);
+									$emptyCountRow = mysqli_fetch_array($emptyCountResult,MYSQL_ASSOC);
+									$damagedCountRow = mysqli_fetch_array($damagedCountResult,MYSQL_ASSOC);
+									$inRepairCountRow = mysqli_fetch_array($inRepairCountResult,MYSQL_ASSOC);
+
+									$totalCountRow = mysqli_fetch_array($totalCountResult,MYSQL_ASSOC);
+
 									echo "<tr>
-											<td width=\"20%\"><div align=\"center\">{$countRow['gasType']} {$countRow['gasName']}</td>
-			                				<td width=\"20%\"><div align=\"center\">{$countRow['cylinderCount']}</td>
-										   </tr>";
-							}
-						?>
-					</table>
+											<td>{$availableCountRow['gasType']} {$availableCountRow['gasName']}</td>
+			                				<td width='10%' align='center'>".($availableCountRow['cylinderCount'] + $reservedCountRow['cylinderCount'])."</td>
+			                				<td width='10%' align='center'>{$dispatchedCountRow['cylinderCount']}</td>
+			                				<td width='10%' align='center'>{$emptyCountRow['cylinderCount']}</td>
+			                				<td width='10%' align='center'>{$damagedCountRow['cylinderCount']}</td>
+			                				<td width='10%' align='center'>{$inRepairCountRow['cylinderCount']}</td>
 
-					<br>
-					<br>
-					<center><b>*** END OF REPORT ***</b></center>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-				</div>
+			                				<td width='10%' align='center'>{$totalCountRow['cylinderCount']}</td>
+
+										   </tr>";
+								}
+							?>
+						</table>
+
+						<br>
+						<br>
+						<center><b>*** END OF REPORT ***</b></center>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+					</div>
 			</div>
 		</div>
 	</body>
@@ -148,6 +190,7 @@ $message = NULL;
 			paging: false,
 			searching: false,
 			ordering: false,
+			info: false,
 		});
 	});
 	</script>
