@@ -8,6 +8,7 @@ $message = NULL;
 		header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/index.php");
 	}
 	function countCylinders($status) {
+
 		return $query = "SELECT COUNT(c.cylinderID) from cylinders c
 		                        join gastype gt on c.gasID=gt.gasID
 		                        join cylinderstatus cs on c.cylinderStatusID=cs.cylinderStatusID
@@ -105,58 +106,116 @@ $message = NULL;
 				</div>
 
 				<?php
-		        	require_once('pentagas-connect.php');
+							ob_start();
+							require('fpdf.php');
+		        	include('pentagas-connect.php');
+							class PDF extends FPDF
+							{
+							// Page header
+							function Header()
+							{
+									// Select Arial bold 15
+									$this->SetFont('Arial','B',15);
+									// Move to the right
+									$this->Cell(45);
+									// Framed title
+									$this->Image('pentagon_png.png',70,8,-300);
+									$this->Cell(100,83,'Daily Cylinder Availability Report',0,0,'C');
+									$tDate = date("F j, Y, g:i a");
+									$this->Cell(-15, 95, $tDate, 0, false, 'R', 0, 0, true, 'T', 'M');
+									// $this->Cell(-11, 95, 'Date : '.$tDate, 0, false, 'R', 0, 0, true, 'T', 'M');
+									//$this->Cell(0, $height,'Date : '.$tDate , 0, 0, 'C')
+									$this->Ln(20);
+
+							}
+
+							// Page footer
+							function Footer()
+							{
+									// Position at 1.5 cm from bottom
+									$this->SetY(-15);
+									// Arial italic 8
+									$this->SetFont('Arial','I',8);
+									$this->AliasNbPages();
+									$this->AliasNbPages('{totalPages}');
+									// Page number
+									$this->Cell(0,10,'Page '.$this->PageNo() . "/{totalPages}",0,0,'C');
+							}
+							}
+							//Create new pdf file
+							$pdf=new PDF('P', 'mm', 'A4');
+
+							//Disable automatic page break
+							$pdf->SetAutoPageBreak(false);
+
+							//Add first page
+							$pdf->AddPage();
+
+							//set initial y axis position per page
+							$y_axis_initial = 70;
+
+							//print column titles
+							$pdf->SetFillColor(232, 232, 232);
+							$pdf->SetFont('Arial', 'B', 12);
+							$pdf->SetY($y_axis_initial);
+							$pdf->SetX(30);
+							$pdf->Cell(75, 6, 'GAS', 1, 0, 'C', 1);
+							$pdf->Cell(75, 6, 'CYLINDER ID', 1, 0, 'C', 1);
+							$y_axis=70;
+							$row_height = 6;
+							$y_axis = $y_axis + $row_height;
 		        	$query = "SELECT * from cylinders c
 		                        join gastype gt on c.gasID=gt.gasID
 		                        join cylinderstatus cs on c.cylinderStatusID=cs.cylinderStatusID
-		                        where cs.cylinderStatusDescription LIKE '{$_POST['select-status']}';
+		                        where cs.cylinderStatusDescription LIKE '{$_SESSION['HAHA']}';
+
 		                " ;
 	            	$result = mysqli_query($dbc,$query);
-								$_SESSION['HAHA']=$_POST['select-status'];
+								//initialize counter
+								$i = 0;
+
+								//Set maximum rows per page
+								$max = 30;
+
+								//Set Row Height
+								$row_height = 6;
+								if(!isset($message)){
+									while($row=mysqli_fetch_array($result)){
+										if ($i == $max){
+												 $pdf->AddPage();
+												 //print column titles for the current page
+												 $pdf->SetY($y_axis_initial);
+												 $pdf->SetX(25);
+												 $pdf->Cell(75, 6, 'GAS', 1, 0, 'C', 1);
+												 $pdf->Cell(75, 6, 'CYLINDER ID', 1, 0, 'C', 1);
+												 $y_axis=70;
+												 $row_height = 6;
+												 //Go to next row
+												 $y_axis = $y_axis + $row_height;
+
+												 //Set $i variable to 0 (first row)
+												 $i = 0;
+										 }
+										 $cyID = $row['cylinderID'];
+										 $gas = $row['gasType']." ".$row['gasName'];
+
+										 $pdf->SetY($y_axis);
+										 $pdf->SetX(30);
+										 $pdf->Cell(75, 6, $gas, 1, 0, 'L', 1);
+										 $pdf->Cell(75, 6, $cyID, 1, 0, 'C', 1);
+										 //Go to next row
+										 $y_axis = $y_axis + $row_height;
+										 $i = $i + 1;
+									}
+								}
+								//Send file
+								$pdf->Output();
+								 ob_end_flush();
 	            ?>
-
-	            <div class="row">
-		           <table class="table table-bordered table-striped" id ="Table";>
-		                <thead>
-		                    <th style="text-align:center">Gas</th>
-		                    <th style="text-align:center">Cylinder ID</th>
-
-		                </thead>
-
-			            <?php
-				            if(!isset($message)){
-				              while($row=mysqli_fetch_array($result)){
-				                echo "<tr>
-						                <td align='center'>{$row['gasType']} {$row['gasName']}</td>
-						                <td align='center'>{$row['cylinderID']}</td>
-						              </tr>";
-				              }
-				            }
-				        ?>
-
-			        </table>
-							<form action="pdf-report-status.php" method="post" class="form-horizontal">
-							<div class="col">
-
-								<center><input class="btn btn-primary" type="submit" name="print-report" value="Print Report"></center>
-							</div>
-			        <br>
-					<br>
-					<center><b>*** END OF REPORT ***</b></center>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-				</div>
 
 			</div>
 		</div>
 	</body>
-
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"> </script>
 	<script type="text/javascript" src="CSS/jquery.validate.min.js"></script>
 	<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
