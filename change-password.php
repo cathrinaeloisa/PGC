@@ -172,7 +172,15 @@
 											<a href="view-gases.php" class="pure-menu-link">Gases</a>
 										</li>
 										<li>
-											<a href="view-cylinders.php" class="pure-menu-link"> Cylinders</a>
+											<a class="pure-menu-link"> Cylinders</a>
+											<ul class="dropdown">
+												<li>
+													<a href="view-cylinders.php" class="pure-menu-link"> Cylinder Details</a>
+												</li>
+								                <li>
+								                  <a href="cylinder-history.php" class="pure-menu-link">Cylinder Transaction Records</a>
+								                </li>
+											</ul>
 										</li>';
 							}
 						?>
@@ -187,8 +195,15 @@
 									
 										if ($userType == 101) {
 										echo '<li>
-												<a href="report-inventory.php" class="pure-menu-link"> Inventory Report</a>
-												<a href="report-cylinder-status.php" class="pure-menu-link"> Inventory Report</a>
+												<a class="pure-menu-link"> Reports</a>
+												<ul>
+													<li>
+														<a href="report-inventory.php" class="pure-menu-link"> Inventory Report</a>
+													</li>
+									                <li>
+									                  <a href="report-cylinder-status.php" class="pure-menu-link highlighter">Daily Cylinder Status Report</a>
+									                </li>
+												</ul>
 											</li>';
 										}
 										else if ($userType == 102) {
@@ -212,102 +227,87 @@
 
 			<div class="pure-u-6-24"></div>
 			<div class="pure-u-17-24">
-				<div class="content-container">
-					<div class="content-container">
 						
-						<div class="page-title-container">
-							<?php
-								if ($userType == 101) echo '<p class="title">Administrative Department: Administrative Manager</p>';
-								else if ($userType == 102) echo '<p class="title">Sales and Marketing Department: Sales and Marketing Manager </p>';
-								else if ($userType == 103) echo '<p class="title">Administrative Department: Billing Clerk </p>';
-								else if ($userType == 104) echo '<p class="title">Administrative Department: Cylinder Control Clerk </p>';
-								else if ($userType == 105) echo '<p class="title">Sales and Marketing Department: Sales and Marketing Manager </p>';
-							?>
-						</div>
-
-						<div class="divider">
-							<div>
-								<?php 
-									if (isset($_SESSION['message'])) {
-										echo $_SESSION['message'];
-										$_SESSION['message'] = NULL;
-									}
-									else if (isset($message)){
-										echo $message;
-									}
-								?>
-							</div>
-						</div>
-
-						<div align="center"> 
-							<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="pure-form pure-form-aligned">
-								<table class="pure-table" style="margin-top:20px">
-									<thead>
-										<tr>
-											<th colspan="2" style="text-align:center"> Account Details </th>
-										</tr>
-									</thead>
-
-									<?php
-										$result = mysqli_query($dbc,$accountDetails);
-										while ($row=mysqli_fetch_array($result,MYSQLI_ASSOC)) {
-											echo"<tr>
-													<td>Employee ID</td>
-													<td width='70%'> {$row['userID']} </td>
-												</tr>
-												<tr class='pure-table-odd'>
-													<td>Employee Type</td>
-													<td width='70%'> {$row['userTypeDescription']} </td>
-												</tr>
-											
-												<tr>
-													<td>Full Name</td>
-													<td width='70%'>
-														{$row['name']}
-													</td>
-												</tr>
-												
-												<tr class='pure-table-odd'>
-													<td>Username</td>
-													<td width='70%'>
-														{$row['username']}
-													</td>
-												</tr>
-												
-												<div class='pure-control-group'>
-													<tr>
-														<td>Password</td>
-														<td width='70%'>
-															<input type='password' size='30' name='newPassword'>
-														</td>
-													</tr>
-												</div>
-
-												<div class='pure-control-group'>
-													<tr class='pure-table-odd'>
-														<td>Confirm Password</td>
-														<td width='70%'>
-															<input type='password' size='30' name='confirmPassword'>
-														</td>
-													</tr>
-												</div>";
-										}
-									?>
-								
-								</table>
-
-								<br>
-								<br>
-
-								
-								<input type="submit" name="submit" value="Change Password"> &nbsp&nbsp&nbsp
-								<a class="cancel-button" href="edit-account-details.php"> Cancel </a>
-
-							</form>
-						</div>
-
+				<div class="row">
+					<div class="page-header">
+						<?php
+							if ($userType == 101) echo '<h1>Administrative Department: Administrative Manager</h1>';
+							else if ($userType == 102) echo '<h1>Sales and Marketing Department: Sales and Marketing Manager </h1>';
+							else if ($userType == 103) echo '<h1>Administrative Department: Billing Clerk </h1>';
+							else if ($userType == 104) echo '<h1>Administrative Department: Cylinder Control Clerk </h1>';
+							else if ($userType == 105) echo '<h1>Sales and Marketing Department: Dispatcher </h1>';
+							else if ($userType == 106) echo '<h1>Production Department: Production Manager </h1>';
+						?>
 					</div>
 				</div>
+
+				<div align="center"> 
+					<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="pure-form pure-form-aligned">
+						<table class="pure-table">
+							<thead>
+								<tr>
+									<th colspan="2" style="text-align:center"> Account Details </th>
+								</tr>
+							</thead>
+
+							<?php
+								$result = mysqli_query($dbc,$accountDetails);
+								while ($row=mysqli_fetch_array($result,MYSQLI_ASSOC)) {
+									echo"<tr>
+											<td>Employee ID</td>
+											<td width='70%'> {$row['userID']} </td>
+										</tr>
+										<tr class='pure-table-odd'>
+											<td>Employee Type</td>
+											<td width='70%'> {$row['userTypeDescription']} </td>
+										</tr>
+									
+										<tr>
+											<td>Full Name</td>
+											<td width='70%'>
+												{$row['name']}
+											</td>
+										</tr>
+										
+										<tr class='pure-table-odd'>
+											<td>Username</td>
+											<td width='70%'>
+												{$row['username']}
+											</td>
+										</tr>
+										
+										<div class='pure-control-group'>
+											<tr>
+												<td>Password</td>
+												<td width='70%'>
+													<input type='password' size='30' name='newPassword'>
+												</td>
+											</tr>
+										</div>
+
+										<div class='pure-control-group'>
+											<tr class='pure-table-odd'>
+												<td>Confirm Password</td>
+												<td width='70%'>
+													<input type='password' size='30' name='confirmPassword'>
+												</td>
+											</tr>
+										</div>";
+								}
+							?>
+						
+						</table>
+
+						<br>
+						<br>
+
+						
+						<input type="submit" name="submit" value="Change Password"> &nbsp&nbsp&nbsp
+						<a class="cancel-button" href="edit-account-details.php"> Cancel </a>
+
+					</form>
+				</div>
+
 			</div>
 		</div>
 	</body>

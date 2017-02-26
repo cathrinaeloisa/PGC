@@ -11,44 +11,55 @@
 	if (isset($_POST['submit'])) {
 		$newName = $_POST['newName'];
 		$newUsername = $_POST['newUsername'];
+
 		if ($newName == $employeeName && $newUsername == $userName) {
 			$_SESSION['message'] = "No changes were made.";
 			header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/view-account-details.php");
 		}
 		else{
-			$existing = FALSE;
+			// WITH USERNAME CHANGE
+			if ($newUsername != $userName) {
+				$existing = FALSE;
+				$query = "SELECT username FROM userAccounts";
+				$result = mysqli_query($dbc,$query);
+				while ($row=mysqli_fetch_array($result,MYSQLI_ASSOC)) {
+					if (strcmp($row['username'],$newUsername) == 0) $existing = TRUE;
+				}
 
-			$query = "SELECT username FROM userAccounts";
-			$result = mysqli_query($dbc,$query);
-			while ($row=mysqli_fetch_array($result,MYSQLI_ASSOC)) {
-				if ($row['username'] == $newUsername) $existing = TRUE;
+				// USERNAME DOES NOT EXIST
+				if (!$existing) {
+					if (strcmp($newName, $employeeName) == 1) {
+						$updatequery = "UPDATE useraccounts SET name = '{$newName}', username = '{$newUsername}' WHERE userID = $userID";
+						$_SESSION['name'] = $newName;
+						$_SESSION['userName'] = $newUsername;
+					}
+					else {
+						$updatequery = "UPDATE useraccounts SET username = '{$newUsername}' WHERE userID = $userID";
+						$_SESSION['userName'] = $newUsername;
+					}
+
+					$updateResult = mysqli_query($dbc,$updatequery);
+					if ($updateResult) {
+						$_SESSION['message'] = "Account details updated!";
+						header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/view-account-details.php");
+					}
+				}
+				else {
+					echo "<script> alert('Username already exists.') </script>";
+				}
+
 			}
 
-			if (!$existing) {
-				if ($newName != $employeeName && $newUsername != $userName) {
-					$query = "UPDATE useraccounts SET name = '{$newName}', username = '{$newUsername}' WHERE userID = $userID";
-					$_SESSION['name'] = $newName;
-					$_SESSION['userName'] = $newUsername;
-				}
-				else if ($newName != $employeeName) {
-					$query = "UPDATE useraccounts SET name = '{$newName}' WHERE userID = $userID";
-					$_SESSION['name'] = $newName;
-				}
-				else if ($newUsername != $userName) {
-					$query = "UPDATE useraccounts SET username = '{$newUsername}' WHERE userID = $userID";
-					$_SESSION['userName'] = $newUsername;
-				}
-
-				$result = mysqli_query($dbc,$query);
-				if ($result) {
-					$_SESSION['message'] = "Account details updated!";
+			// NO USERNAME CHANGE, JUST FULL NAME
+			else if ($newName != $employeeName){
+				$updatequery = "UPDATE useraccounts SET name = '{$newName}' WHERE userID = $userID";
+				$_SESSION['name'] = $newName;
+			
+				$updateResult = mysqli_query($dbc,$updatequery);
+				if ($updateResult) {
+					$_SESSION['message'] = "Account details updated.";
 					header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/view-account-details.php");
 				}
-				else $_SESSION['message'] = "Error updating account details.";
-			}
-
-			else {
-				$message = "Username already exists.";
 			}
 		}
 	}
@@ -64,6 +75,7 @@
 		<script src="CSS/jquery.min.js"></script>
 		<script src="CSS/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="CSS/bootstrap.min.css">
+		<script type="text/javascript" src="CSS/error-messages.js"></script>
 	</head>
 	
 	<body>
@@ -195,7 +207,15 @@
 											<a href="view-gases.php" class="pure-menu-link">Gases</a>
 										</li>
 										<li>
-											<a href="view-cylinders.php" class="pure-menu-link"> Cylinders</a>
+											<a class="pure-menu-link"> Cylinders</a>
+											<ul class="dropdown">
+												<li>
+													<a href="view-cylinders.php" class="pure-menu-link"> Cylinder Details</a>
+												</li>
+								                <li>
+								                  <a href="cylinder-history.php" class="pure-menu-link">Cylinder Transaction Records</a>
+								                </li>
+											</ul>
 										</li>';
 							}
 						?>
@@ -209,8 +229,15 @@
 									
 										if ($userType == 101) {
 										echo '<li>
-												<a href="report-inventory.php" class="pure-menu-link"> Inventory Report</a>
-												<a href="report-cylinder-status.php" class="pure-menu-link"> Inventory Report</a>
+												<a class="pure-menu-link"> Reports</a>
+												<ul>
+													<li>
+														<a href="report-inventory.php" class="pure-menu-link"> Inventory Report</a>
+													</li>
+									                <li>
+									                  <a href="report-cylinder-status.php" class="pure-menu-link highlighter">Daily Cylinder Status Report</a>
+									                </li>
+												</ul>
 											</li>';
 										}
 										else if ($userType == 102) {
@@ -234,93 +261,79 @@
 
 			<div class="pure-u-6-24"></div>
 			<div class="pure-u-17-24">
-				<div class="content-container">
-					<div class="content-container">
 						
-						<div class="page-title-container">
-							<?php
-								if ($userType == 101) echo '<p class="title">Administrative Department: Administrative Manager</p>';
-								else if ($userType == 102) echo '<p class="title">Sales and Marketing Department: Sales and Marketing Manager </p>';
-								else if ($userType == 103) echo '<p class="title">Administrative Department: Billing Clerk </p>';
-								else if ($userType == 104) echo '<p class="title">Administrative Department: Cylinder Control Clerk </p>';
-								else if ($userType == 105) echo '<p class="title">Sales and Marketing Department: Sales and Marketing Manager </p>';
-							?>
-						</div>
-
-						<div class="divider">
-							<div>
-								<?php 
-									if (isset($_SESSION['message'])) {
-										echo $_SESSION['message'];
-									}
-									else if (isset($message)){
-										echo $message;
-									}
-								?>
-							</div>
-						</div>
-
-						<div align="center"> 
-							<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="pure-form pure-form-aligned">
-								<table class="pure-table" style="margin-top:20px">
-									<thead>
-										<tr>
-											<th colspan="2" style="text-align:center"> Account Details </th>
-										</tr>
-									</thead>
-
-									<?php
-										$result = mysqli_query($dbc,$accountDetails);
-										while ($row=mysqli_fetch_array($result,MYSQLI_ASSOC)) {
-											echo"<tr>
-													<td>Employee ID</td>
-													<td width='70%'> {$row['userID']} </td>
-												</tr>
-												<tr class='pure-table-odd'>
-													<td>Employee Type</td>
-													<td width='70%'> {$row['userTypeDescription']} </td>
-												</tr>
-												
-												<div class='pure-control-group'>
-													<tr>
-														<td>Full Name</td>
-														<td width='70%'>
-															<input type='text' size='30' name='newName' value={$row['name']}>
-														</td>
-													</tr>
-												</div>
-												
-												<div class='pure-control-group'>
-													<tr class='pure-table-odd'>
-														<td>Username</td>
-														<td width='70%'>
-															<input type='text' size='30' name='newUsername' value={$row['username']}>
-														</td>
-													</tr>
-												</div>
-
-												<tr>
-													<td>Password</td>
-													<td width='70%'>
-														<a href='change-password.php'> Change Password
-													</td>
-												</tr>";
-										}
-									?>
-								
-								</table>
-
-								<br>
-								<br>
-
-								<input type="submit" name="submit" value="Update Account Details"> &nbsp&nbsp&nbsp	
-								<a class="cancel-button" href="view-account-details.php"> Cancel </a>
-
-							</form>
-						</div>
-
+				<div class="row">
+					<div class="page-header">
+						<?php
+							if ($userType == 101) echo '<h1>Administrative Department: Administrative Manager</h1>';
+							else if ($userType == 102) echo '<h1>Sales and Marketing Department: Sales and Marketing Manager </h1>';
+							else if ($userType == 103) echo '<h1>Administrative Department: Billing Clerk </h1>';
+							else if ($userType == 104) echo '<h1>Administrative Department: Cylinder Control Clerk </h1>';
+							else if ($userType == 105) echo '<h1>Sales and Marketing Department: Dispatcher </h1>';
+							else if ($userType == 106) echo '<h1>Production Department: Production Manager </h1>';
+						?>
 					</div>
 				</div>
+
+				<div align="center"> 
+					<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="pure-form pure-form-aligned">
+						<table class="pure-table">
+							<thead>
+								<tr>
+									<th colspan="2" style="text-align:center"> Account Details </th>
+								</tr>
+							</thead>
+
+							<?php
+								$result = mysqli_query($dbc,$accountDetails);
+								while ($row=mysqli_fetch_array($result,MYSQLI_ASSOC)) {
+									echo"<tr>
+											<td>Employee ID</td>
+											<td width='70%'> {$row['userID']} </td>
+										</tr>
+										<tr class='pure-table-odd'>
+											<td>Employee Type</td>
+											<td width='70%'> {$row['userTypeDescription']} </td>
+										</tr>
+										
+										<div class='pure-control-group'>
+											<tr>
+												<td>Full Name</td>
+												<td width='70%'>
+													<input type='text' size='30' name='newName' value=\"{$row['name']}\">
+												</td>
+											</tr>
+										</div>
+										
+										<div class='pure-control-group'>
+											<tr class='pure-table-odd'>
+												<td>Username</td>
+												<td width='70%'>
+													<input type='text' size='30' name='newUsername' value={$row['username']}>
+												</td>
+											</tr>
+										</div>
+
+										<tr>
+											<td>Password</td>
+											<td width='70%'>
+												<a href='change-password.php'> Change Password
+											</td>
+										</tr>";
+								}
+							?>
+						
+						</table>
+
+						<br>
+						<br>
+
+						<input type="submit" name="submit" value="Update Account Details"> &nbsp&nbsp&nbsp	
+						<a class="cancel-button" href="view-account-details.php"> Cancel </a>
+
+					</form>
+				</div>
+
 			</div>
 		</div>
 	</body>

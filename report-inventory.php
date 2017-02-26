@@ -73,16 +73,21 @@ $message = NULL;
 							<a href="view-gases.php" class="pure-menu-link">Gases</a>
 						</li>
 						<li>
-							<a href="view-cylinders.php" class="pure-menu-link"> Cylinders</a>
+							<a class="pure-menu-link"> Cylinders</a>
+							<ul class="dropdown">
+								<li>
+									<a href="view-cylinders.php" class="pure-menu-link"> Cylinder Details</a>
+								</li>
+				                <li>
+				                  <a href="cylinder-history.php" class="pure-menu-link">Cylinder Transaction Records</a>
+				                </li>
+							</ul>
 						</li>
 						<li>
 							<a class="pure-menu-link"> Reports</a>
 							<ul>
 								<li>
 									<a href="report-inventory.php" class="pure-menu-link highlighter"> Inventory Report</a>
-								</li>
-								<li>
-									<a href="report-cylinder-history.php" class="pure-menu-link">Cylinder History Report</a>
 								</li>
 				                <li>
 				                  <a href="report-cylinder-status.php" class="pure-menu-link">Daily Cylinder Status Report</a>
@@ -120,8 +125,6 @@ $message = NULL;
 	            				<th style="text-align:center; font-size:13">Qty. Available</th>
 	            				<th style="text-align:center; font-size:13">Qty. Dispatched</th>
 	            				<th style="text-align:center; font-size:13">Qty. Empty</th>
-	            				<th style="text-align:center; font-size:13">Qty. Damaged</th>
-	            				<th style="text-align:center; font-size:13">Qty. In Repair</th>
 
 								<th style="text-align:center; font-size:13">Total Cylinders</th>
 
@@ -132,21 +135,15 @@ $message = NULL;
 								while ($gasRow =  mysqli_fetch_array($gasResult,MYSQL_ASSOC)) {
 									$availableCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 401));
 									$reservedCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 409));
-
 									$dispatchedCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 406));
 									$emptyCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 402));
-									$damagedCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 403));
-									$inRepairCountResult = mysqli_query($dbc, statusCountCylindersOfGas($gasRow['gasID'], 404));
 
 									$totalCountResult = mysqli_query($dbc, countTotalCylindersOfGas($gasRow['gasID']));
 
 									$availableCountRow = mysqli_fetch_array($availableCountResult,MYSQL_ASSOC);
 									$reservedCountRow = mysqli_fetch_array($reservedCountResult,MYSQL_ASSOC);
-
 									$dispatchedCountRow = mysqli_fetch_array($dispatchedCountResult,MYSQL_ASSOC);
 									$emptyCountRow = mysqli_fetch_array($emptyCountResult,MYSQL_ASSOC);
-									$damagedCountRow = mysqli_fetch_array($damagedCountResult,MYSQL_ASSOC);
-									$inRepairCountRow = mysqli_fetch_array($inRepairCountResult,MYSQL_ASSOC);
 
 									$totalCountRow = mysqli_fetch_array($totalCountResult,MYSQL_ASSOC);
 
@@ -155,8 +152,6 @@ $message = NULL;
 			                				<td width='10%' align='center'>".($availableCountRow['cylinderCount'] + $reservedCountRow['cylinderCount'])."</td>
 			                				<td width='10%' align='center'>{$dispatchedCountRow['cylinderCount']}</td>
 			                				<td width='10%' align='center'>{$emptyCountRow['cylinderCount']}</td>
-			                				<td width='10%' align='center'>{$damagedCountRow['cylinderCount']}</td>
-			                				<td width='10%' align='center'>{$inRepairCountRow['cylinderCount']}</td>
 
 			                				<td width='10%' align='center'>{$totalCountRow['cylinderCount']}</td>
 

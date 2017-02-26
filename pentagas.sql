@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 21, 2017 at 10:04 AM
--- Server version: 10.1.16-MariaDB
--- PHP Version: 5.6.24
+-- Generation Time: Feb 22, 2017 at 05:24 AM
+-- Server version: 10.1.19-MariaDB
+-- PHP Version: 5.6.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -40,10 +40,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customerID`, `customerType`, `name`, `deliveryAddress`, `contactNum`, `emailAddress`) VALUES
-('100-00001', 'Medical', 'Medical Customer 1', 'Medical Customer 1 Delivery Address', 3747716, 'customeremail1@email.com'),
-('100-00002', 'Medical', 'Jose Reyes Hospital', 'Bataan', 9273018, 'josereyeshospital@email.com'),
-('100-00003', 'Medical', '  Pentagon Gas Corporation  ', '  Mandaluyong ', 2234567, '  pentagongas@pgc.com  '),
-('200-00001', 'Industrial', 'Datem Corporation ', 'Mandaluyong  ', 2753519, 'datem@datem.com');
+('100-00001', 'Medical', 'The Medical City', 'Ortigas Avenue, Pasig City, Metro Manila', 9881000, 'mail@themedicalcity.com');
 
 -- --------------------------------------------------------
 
@@ -101,16 +98,16 @@ INSERT INTO `cylinders` (`cylinderID`, `gasID`, `cylinderStatusID`, `dateAcquire
 ('0009-44', '100-04', 406, '2017-02-06'),
 ('0010-44', '100-04', 401, '2017-02-06'),
 ('0011-44', '100-04', 402, '2017-02-06'),
-('0012-44', '200-01', 401, '2017-02-09'),
-('0013-44', '200-01', 401, '2017-02-09'),
-('0014-44', '200-01', 401, '2017-02-09'),
-('0015-44', '200-01', 401, '2017-02-09'),
-('0016-44', '200-01', 401, '2017-02-09'),
-('0017-44', '200-01', 401, '2017-02-09'),
-('0018-44', '200-01', 401, '2017-02-09'),
-('0019-44', '200-01', 401, '2017-02-09'),
-('0020-44', '200-01', 401, '2017-02-09'),
-('0021-44', '200-01', 401, '2017-02-09'),
+('0012-44', '200-01', 409, '2017-02-09'),
+('0013-44', '200-01', 409, '2017-02-09'),
+('0014-44', '200-01', 409, '2017-02-09'),
+('0015-44', '200-01', 402, '2017-02-09'),
+('0016-44', '200-01', 402, '2017-02-09'),
+('0017-44', '200-01', 402, '2017-02-09'),
+('0018-44', '200-01', 409, '2017-02-09'),
+('0019-44', '200-01', 409, '2017-02-09'),
+('0020-44', '200-01', 409, '2017-02-09'),
+('0021-44', '200-01', 409, '2017-02-09'),
 ('0022-44', '200-02', 401, '2017-02-09'),
 ('0023-44', '200-02', 401, '2017-02-09'),
 ('0024-44', '200-02', 401, '2017-02-09'),
@@ -161,19 +158,6 @@ CREATE TABLE `deliverydetails` (
   `deliveryDate` date NOT NULL,
   `pickedupdate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `deliverydetails`
---
-
-INSERT INTO `deliverydetails` (`deliveryDetailsID`, `orderDetailsID`, `cylinderID`, `deliveryDate`, `pickedupdate`) VALUES
-('201701000101-1', '2017010001-01', '0001-44', '2017-02-24', '2017-02-13'),
-('201701000201-1', '2017010002-01', '0001-44', '2017-02-21', '2017-02-28'),
-('201701000301-1', '2017010003-01', '0011-44', '2017-02-23', '2017-02-13'),
-('201701000401-1', '2017010004-01', '0009-44', '2017-02-15', NULL),
-('201701000402-1', '2017010004-02', '0029-44', '2017-02-16', NULL),
-('201701000402-2', '2017010004-02', '0030-44', '2017-02-16', '2017-02-13'),
-('201701000402-3', '2017010004-02', '0031-44', '2017-02-16', '2017-02-13');
 
 -- --------------------------------------------------------
 
@@ -258,17 +242,6 @@ CREATE TABLE `orderdetails` (
   `quantity` int(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `orderdetails`
---
-
-INSERT INTO `orderdetails` (`orderDetailsID`, `gasID`, `orderID`, `quantity`) VALUES
-('2017010001-01', '100-01', '201701-0001', 2),
-('2017010002-01', '100-02', '201701-0002', 3),
-('2017010003-01', '100-04', '201701-0003', 1),
-('2017010004-01', '100-04', '201701-0004', 1),
-('2017010004-02', '200-02', '201701-0004', 3);
-
 -- --------------------------------------------------------
 
 --
@@ -283,16 +256,6 @@ CREATE TABLE `orders` (
   `orderDate` date DEFAULT NULL,
   `contactPerson` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `orders`
---
-
-INSERT INTO `orders` (`orderID`, `userID`, `orderStatusID`, `customerID`, `orderDate`, `contactPerson`) VALUES
-('201701-0001', 6000015, 802, '100-00001', '2017-02-06', ''),
-('201701-0002', 6000015, 802, '100-00002', '2017-02-06', ''),
-('201701-0003', 6000015, 802, '100-00003', '2017-02-06', ''),
-('201701-0004', 6000015, 802, '100-00001', '2017-02-06', '');
 
 -- --------------------------------------------------------
 
@@ -343,7 +306,8 @@ INSERT INTO `useraccounts` (`userID`, `userTypeID`, `username`, `name`, `passwor
 (6000013, 101, 'iketan', 'Ike', '*00A51F3F48415C7D4E8908980D443C29C69B60C9'),
 (6000015, 103, 'patrickgan', 'Patrick Gan', '*00A51F3F48415C7D4E8908980D443C29C69B60C9'),
 (6000016, 101, 'cathtan', 'Catherine Tan', '*00A51F3F48415C7D4E8908980D443C29C69B60C9'),
-(6000017, 103, 'billclark', 'Bill Clark', '*00A51F3F48415C7D4E8908980D443C29C69B60C9');
+(6000017, 103, 'billclark', 'Bill Clark', '*00A51F3F48415C7D4E8908980D443C29C69B60C9'),
+(6000019, 106, 'mariamiggy', 'Geraldine Songco', '*00A51F3F48415C7D4E8908980D443C29C69B60C9');
 
 -- --------------------------------------------------------
 
@@ -365,7 +329,8 @@ INSERT INTO `usertypes` (`userTypeID`, `userTypeDescription`) VALUES
 (102, 'Sales and Marketing Manager'),
 (103, 'Billing Clerk'),
 (104, 'Cylinder Control Clerk'),
-(105, 'Dispatcher');
+(105, 'Dispatcher'),
+(106, 'Production Manager');
 
 --
 -- Indexes for dumped tables
@@ -479,7 +444,7 @@ ALTER TABLE `gaspricingaudit`
 -- AUTO_INCREMENT for table `useraccounts`
 --
 ALTER TABLE `useraccounts`
-  MODIFY `userID` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6000018;
+  MODIFY `userID` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6000020;
 --
 -- Constraints for dumped tables
 --
@@ -495,7 +460,7 @@ ALTER TABLE `cylinderrefillaudit`
 --
 ALTER TABLE `cylinderrequest`
   ADD CONSTRAINT `fk_cylinderrequest01` FOREIGN KEY (`orderID`) REFERENCES `orders` (`orderID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_cylinderrequest02` FOREIGN KEY (`gasID`) REFERENCES `gastype` (`gasID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_cylinderrequest02` FOREIGN KEY (`gasID`) REFERENCES `gastype` (`gasID`),
   ADD CONSTRAINT `fk_cylinderrequest03` FOREIGN KEY (`requestedBy`) REFERENCES `orders` (`userID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --

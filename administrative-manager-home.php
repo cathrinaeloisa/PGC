@@ -53,17 +53,21 @@
 							<a href="view-gases.php" class="pure-menu-link">Gases</a>
 						</li>
 						<li>
-							<a href="view-cylinders.php" class="pure-menu-link"> Cylinders</a>
+							<a class="pure-menu-link"> Cylinders</a>
+							<ul class="dropdown">
+								<li>
+									<a href="view-cylinders.php" class="pure-menu-link"> Cylinder Details</a>
+								</li>
+				                <li>
+				                  <a href="cylinder-history.php" class="pure-menu-link">Cylinder Transaction Records</a>
+				                </li>
+							</ul>
 						</li>
-
 						<li>
 							<a class="pure-menu-link"> Reports</a>
 							<ul class="dropdown">
 								<li>
 									<a href="report-inventory.php" class="pure-menu-link"> Inventory Report</a>
-								</li>
-								<li>
-									<a href="report-cylinder-history.php" class="pure-menu-link">Cylinder History Report</a>
 								</li>
 				                <li>
 				                  <a href="report-cylinder-status.php" class="pure-menu-link">Daily Cylinder Status Report</a>

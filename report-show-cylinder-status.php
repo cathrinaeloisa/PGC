@@ -6,9 +6,17 @@ $message = NULL;
 	session_start();
 	require_once('pentagas-connect.php');
 
-  $userType = $_SESSION['userTypeID'];
+	$userType = $_SESSION['userTypeID'];
 	if ($userType != 101) {
 		header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/index.php");
+	}
+
+	function countCylinders($status) {
+		return $query = "SELECT COUNT(c.cylinderID) from cylinders c
+		                        join gastype gt on c.gasID=gt.gasID
+		                        join cylinderstatus cs on c.cylinderStatusID=cs.cylinderStatusID
+		                        where cs.cylinderStatusDescription LIKE '{$_POST['select-status']}'";
+
 	}
 
 ?>
@@ -57,16 +65,21 @@ $message = NULL;
 							<a href="view-gases.php" class="pure-menu-link">Gases</a>
 						</li>
 						<li>
-							<a href="view-cylinders.php" class="pure-menu-link"> Cylinders</a>
+							<a class="pure-menu-link"> Cylinders</a>
+							<ul class="dropdown">
+								<li>
+									<a href="view-cylinders.php" class="pure-menu-link"> Cylinder Details</a>
+								</li>
+				                <li>
+				                  <a href="cylinder-history.php" class="pure-menu-link">Cylinder Transaction Records</a>
+				                </li>
+							</ul>
 						</li>
 						<li>
 							<a class="pure-menu-link"> Reports</a>
 							<ul>
 								<li>
 									<a href="report-inventory.php" class="pure-menu-link"> Inventory Report</a>
-								</li>
-								<li>
-									<a href="report-cylinder-history.php" class="pure-menu-link">Cylinder History Report</a>
 								</li>
 				                <li>
 				                  <a href="report-cylinder-status.php" class="pure-menu-link highlighter">Daily Cylinder Status Report</a>
@@ -111,20 +124,17 @@ $message = NULL;
 	            <div class="row">
 		           <table class="table table-bordered table-striped" id ="Table";>
 		                <thead>
-		                    <th style="text-align:center">Cylinder ID</th>
 		                    <th style="text-align:center">Gas</th>
-		                    <th style="text-align:center">Cylinder Status</th>
+		                    <th style="text-align:center">Cylinder ID</th>
+
 		                </thead>
 
 			            <?php
 				            if(!isset($message)){
 				              while($row=mysqli_fetch_array($result)){
-				                $blank=" ";
 				                echo "<tr>
-						                <td width=\"20%\"><div align=\"center\">{$row['cylinderID']}
-						                <td width=\"20%\"><div align=\"center\">{$row['gasType']} {$blank} {$row['gasName']}
-						                <td width=\"20%\"><div align=\"center\">{$row['cylinderStatusDescription']}
-						                </div></td>
+						                <td align='center'>{$row['gasType']} {$row['gasName']}</td>
+						                <td align='center'>{$row['cylinderID']}</td>
 						              </tr>";
 				              }
 				            }

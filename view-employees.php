@@ -93,7 +93,15 @@
 											<a href="view-gases.php" class="pure-menu-link">Gases</a>
 										</li>
 										<li>
-											<a href="view-cylinders.php" class="pure-menu-link"> Cylinders</a>
+											<a class="pure-menu-link"> Cylinders</a>
+											<ul class="dropdown">
+												<li>
+													<a href="view-cylinders.php" class="pure-menu-link"> Cylinder Details</a>
+												</li>
+								                <li>
+								                  <a href="cylinder-history.php" class="pure-menu-link">Cylinder Transaction Records</a>
+								                </li>
+											</ul>
 										</li>';
 							}
 						?>

@@ -145,7 +145,7 @@
 						<table class="hover stripe cell-border" id="cylinderTable">
 			      			<thead>
 								<tr>
-									<th> </th>
+									<th style="text-align:center"><input type="checkbox" name="select-all" id="select-all"></th>
 									<th style="text-align:center"> Cylinder ID </th>
 									<th style="text-align:center"> Gas Type</th>
 									<th style="text-align:center"> Gas Name</th>
@@ -240,6 +240,14 @@
 		            .removeClass('has-error');
     			}
     		})
+    		$('#select-all').click(function(event) {   
+			    if(this.checked) {
+			        // Iterate each checkbox
+			        $(':checkbox').each(function() {
+			            this.checked = true;                        
+			        });
+			    }
+			});
 		</script>
 	</body>
 </html>
