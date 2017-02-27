@@ -20,6 +20,8 @@ $message = NULL;
 		return $query = " SELECT COUNT(c.cylinderID) AS 'cylinderCount'
 							FROM cylinders c JOIN gasType gt ON c.gasID = gt.gasID
 						   WHERE gt.gasID = '{$gasID}'
+						   	 AND c.cylinderStatusID != 403
+                             AND c.cylinderStatusID != 404
                              AND c.cylinderStatusID != 407
                              AND c.cylinderStatusID != 408";
 	}
@@ -164,18 +166,19 @@ $message = NULL;
 						<br>
 						<center><b>*** END OF REPORT ***</b></center>
 						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
+						<br>						
 					</div>
+					<form action="print-inventory-report.php" method="post">
+						<div class="row">
+								<div class="col">
+									<center><input class="btn btn-primary" type="submit" name="show-report" value="Print Report"></center>
+								</div>
+						</div>
+					</form>
 			</div>
 		</div>
-	</body>
 
+	</body>
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"> </script>
 	<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 	
@@ -189,5 +192,8 @@ $message = NULL;
 		});
 	});
 	</script>
+
+
+
 	
 </html>
