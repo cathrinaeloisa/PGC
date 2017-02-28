@@ -3,18 +3,17 @@ $timestamp = NULL;
 $message = NULL;
 	require_once('pentagas-connect.php');
 	session_start();
-	
-	$userType = $_SESSION['userTypeID'];
-	if ($userType != 102) {
-		header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/index.php");
-	}
-	
+
+	// $userType = $_SESSION['userTypeID'];
+	// if ($userType != 102) {
+	// 	header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/index.php");
+	// }
+
 	if(isset($_POST['show-report'])){
 		if (empty($_POST['startdate'])){
 			$_SESSION['startdate']=FALSE;
 			$message='You forgot to enter the start date';
 		} else $_SESSION['startdate'] = $_POST['startdate'];
-
 		if (empty($_POST['enddate'])){
 			$_SESSION['enddate']=FALSE;
 			$message='You forgot to enter the end date';
@@ -29,8 +28,7 @@ $message = NULL;
 	else{
 		$_SESSION['startdate'] = null;
 		$_SESSION['enddate'] = null;
-	}			
-
+	}
 ?>
 
 </!DOCTYPE html>
@@ -46,7 +44,7 @@ $message = NULL;
 		<script src="CSS/jquery.min.js"></script>
 		<script src="CSS/bootstrap.min.js"></script>
 	</head>
-	
+
 	<body>
 		<div class="pure-g">
 			<!-- SIDEBAR -->
@@ -58,7 +56,7 @@ $message = NULL;
 						</div>
 					</div>
 				</div>
-				
+
 				<div class="sidebar-elements">
 					<ul class="pure-menu-list">
 						<li>
@@ -85,17 +83,17 @@ $message = NULL;
 						</li>
 					</ul>
 				</div>
-				
+
 			</div>
 
 			<div class="pure-u-6-24"></div>
 			<div class="pure-u-17-24">
-				
+
 				<!-- TITLE -->
 				<div class="page-header">
 					<h1> Sales Report</h1>
-					<h7> 
-						<?php 
+					<h7>
+						<?php
 							date_default_timezone_set('Asia/Manila');
 							$timestamp = date("F j, Y // g:i a");
 							echo "<b>".$timestamp."<b>";
@@ -105,7 +103,7 @@ $message = NULL;
 
 				<!-- DATE RANGE CONTAINER -->
 				<div class="well" id="dateSpace">
-					<form action="report-show-sales.php" method="post" class="form-horizontal" id="dateRange">
+					<form action="report-sales-dates.php" method="post" class="form-horizontal" id="dateRange">
 						<div class="form-group">
 							<label for="startdate" class="col-sm-2 control-label"> Start Date: </label>
 							<div class="col-sm-3">
@@ -126,7 +124,7 @@ $message = NULL;
 						</div>
 					</form>
 				</div>
-				
+
 			</div>
 		</div>
 	</body>
@@ -140,7 +138,6 @@ $message = NULL;
 		    var finDate = $('#enddate').val();
 		    return Date.parse(startDate) < Date.parse(finDate);
 		}, "* End date must be after start date");
-
 		$(function() {
    			// Setup form validation on the #register-form element
 	        $("#dateRange").validate({
@@ -154,7 +151,7 @@ $message = NULL;
 	            		isValid: true,
 	            	},
 	            },
-	            
+
 	            highlight: function(element) {
 	                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
 	            },
@@ -170,7 +167,6 @@ $message = NULL;
 	                },
 	            }
 	        });
-
 	        function removeError(element) {
 	        element.addClass('valid')
 	            .closest('.form-group')
