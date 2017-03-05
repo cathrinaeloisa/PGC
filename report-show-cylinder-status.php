@@ -1,24 +1,56 @@
 <?php
 $timestamp = NULL;
 $message = NULL;
+
 	session_start();
 	require_once('pentagas-connect.php');
+
 	$userType = $_SESSION['userTypeID'];
 	if ($userType != 101) {
 		header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/index.php");
 	}
-	function countCylinders($status) {
-		return $query = "SELECT COUNT(c.cylinderID) from cylinders c
+
+	function getCylinders($status, $gasID) {
+		if (strcmp($status, "Available") == 0) {
+			return $query = "SELECT c.cylinderID from cylinders c
 		                        join gastype gt on c.gasID=gt.gasID
 		                        join cylinderstatus cs on c.cylinderStatusID=cs.cylinderStatusID
-		                        where cs.cylinderStatusDescription LIKE '{$_POST['select-status']}'";
+		                        where c.gasID = '{$gasID}'
+		                        AND cs.cylinderStatusDescription LIKE '{$status}'
+		                        OR c.gasID = '{$gasID}'
+		                        AND cs.cylinderStatusDescription LIKE 'Reserved'";
+		}
+
+		else return $query = "SELECT c.cylinderID from cylinders c
+		                        join gastype gt on c.gasID=gt.gasID
+		                        join cylinderstatus cs on c.cylinderStatusID=cs.cylinderStatusID
+		                        where cs.cylinderStatusDescription LIKE '{$status}'
+		                        AND c.gasID = '{$gasID}'";
 	}
+
+	function getGasNames($status) {
+		if (strcmp($status, "Available") == 0) {
+			return $query = "SELECT gt.gasName, gt.gasType, gt.gasID
+							   FROM gasType gt JOIN cylinders c ON c.gasID = gt.gasID
+							   				   JOIN cylinderStatus cs ON c.cylinderStatusID = cs.cylinderStatusID
+							  WHERE cs.cylinderStatusDescription LIKE '{$status}'
+							     OR cs.cylinderStatusDescription LIKE 'Reserved'
+						   GROUP BY gt.gasID";
+		}
+
+		else return $query ="SELECT gt.gasName, gt.gasType, gt.gasID
+							   FROM gasType gt JOIN cylinders c ON c.gasID = gt.gasID
+							   				   JOIN cylinderStatus cs ON c.cylinderStatusID = cs.cylinderStatusID
+							  WHERE cs.cylinderStatusDescription LIKE '{$status}'
+						   GROUP BY gt.gasID";
+	}
+
 ?>
 
 </!DOCTYPE html>
 <html>
 	<head>
-		<title> Cylinder Activity </title>
+		<title> Cylinder Status Report </title>
 		<link rel="stylesheet" href="CSS/dashboard.css">
 		<link rel="stylesheet" type="text/css" href="CSS/pure-release-0.6.0/pure-min.css">
 		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></link>
@@ -93,7 +125,19 @@ $message = NULL;
 				<!-- TITLE -->
 				<div class="row">
 					<div class="page-header">
-						<h1>Daily Cylinder Status Report</h1>
+						<h1> Daily
+							<?php
+								if ($_POST['select-status'] == 'Available') echo " Cylinder Availablity ";
+								else if ($_POST['select-status'] == 'Empty') echo " Empty Cylinder ";
+								else if ($_POST['select-status'] == 'Damaged') echo " Damaged Cylinder ";
+								else if ($_POST['select-status'] == 'In Repair') echo " In Repair Cylinder ";
+								else if ($_POST['select-status'] == 'Repaired') echo " Repaired Cylinder ";
+								else if ($_POST['select-status'] == 'Dispatched') echo " Dispatched Cylinder ";
+								else if ($_POST['select-status'] == 'No Longer In Use') echo " No Longer In Use Cylinder ";
+								else if ($_POST['select-status'] == 'Lost') echo " Lost Cylinder ";
+								$_SESSION['select-status'] = $_POST['select-status'];
+							?> Report
+						</h1>
 						<h7>
 							<?php
 								date_default_timezone_set('Asia/Manila');
@@ -104,55 +148,49 @@ $message = NULL;
 					</div>
 				</div>
 
-				<?php
-		        	require_once('pentagas-connect.php');
-		        	$query = "SELECT * from cylinders c
-		                        join gastype gt on c.gasID=gt.gasID
-		                        join cylinderstatus cs on c.cylinderStatusID=cs.cylinderStatusID
-		                        where cs.cylinderStatusDescription LIKE '{$_POST['select-status']}';
-		                " ;
-	            	$result = mysqli_query($dbc,$query);
-								$_SESSION['HAHA']=$_POST['select-status'];
-	            ?>
-
 	            <div class="row">
 		           <table class="table table-bordered table-striped" id ="Table";>
-		                <thead>
-		                    <th style="text-align:center">Gas</th>
-		                    <th style="text-align:center">Cylinder ID</th>
+		           		<?php
+				            $gasResult = mysqli_query($dbc, getGasNames($_POST['select-status']));
+							while($gasRow=mysqli_fetch_array($gasResult)){
+				                echo "<thead>
+					                    <th colspan=\"5\" style='border-top:2px solid black; border-bottom:2px solid black; text-align:center'>{$gasRow['gasType']} {$gasRow['gasName']} Cylinders</th>
+					                  </thead>";
 
-		                </thead>
+				            	$cylinderResult = mysqli_query($dbc, getCylinders($_POST['select-status'], $gasRow['gasID']));
+				            	$rowCount = mysqli_num_rows($cylinderResult);
+				            	while($cylinderRow=mysqli_fetch_array($cylinderResult)){
+				                	$cylinderList[] = $cylinderRow['cylinderID'];
+				            	}
 
-			            <?php
-				            if(!isset($message)){
-				              while($row=mysqli_fetch_array($result)){
-				                echo "<tr>
-						                <td align='center'>{$row['gasType']} {$row['gasName']}</td>
-						                <td align='center'>{$row['cylinderID']}</td>
-						              </tr>";
-				              }
-				            }
-				        ?>
+				            	for ($i = 0; $i < $rowCount;) {
+				            		echo "<tr>";
+				            		for ($j = $i, $counter = 0; $counter < 5; $counter++, $j++) {
+				            			if ($j < $rowCount) echo "<td align='center'>{$cylinderList[$j]}</td>";
+				            			else echo "<td></td>";
+				            		}
+				            		echo "</tr>";
+				            		$i += 5;
+				            	}
+				            	unset($cylinderList);
+					        }
+					    ?>
+
 
 			        </table>
-							<form action="pdf-report-status.php" method="post" class="form-horizontal">
-							<div class="col">
 
-								<center><input class="btn btn-primary" type="submit" name="print-report" value="Print Report"></center>
-							</div>
 			        <br>
 					<br>
 					<center><b>*** END OF REPORT ***</b></center>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
+
 					<br>
 				</div>
-
+				<form action="pdf-cylinder-status.php" method="post">
+					<div class="row">
+							<div class="col">
+								<center><input class="btn btn-primary" type="submit" name="show-report" value="Print Report"></center>
+							</div>
+					</div>
 			</div>
 		</div>
 	</body>
@@ -179,6 +217,7 @@ $message = NULL;
 	                'select-status': "Please select a status.",
 	            }
 	        });
+
 	        function removeError(element) {
 	        element.addClass('valid')
 	            .closest('.form-group')

@@ -1,20 +1,15 @@
 <?php
 $timestamp = NULL;
 $message = NULL;
-
-
 	session_start();
 	require_once('pentagas-connect.php');
-
     $userType = $_SESSION['userTypeID'];
 	if ($userType != 101) {
 		header("Location: http://".$_SERVER['HTTP_HOST'].  dirname($_SERVER['PHP_SELF'])."/index.php");
 	}
-
 	// LIST OF STATUS
 	$statusList = "SELECT * FROM CYLINDERSTATUS";
 	$result_statusList = mysqli_query($dbc, $statusList);
-
 	function getSelectedCylinders ($cylinderStatus) {
 		return $thisquery = "SELECT * FROM CYLINDERS c
 								JOIN CYLINDERSTATUS cs ON c.cylinderStatusID=cs.cylinderStatusID
@@ -22,7 +17,6 @@ $message = NULL;
 				   			   WHERE CYLINDERSTATUSDESCRIPTION = '{$cylinderStatus}'
 				   			 	";
 	}
-
 ?>
 
 </!DOCTYPE html>
@@ -32,7 +26,7 @@ $message = NULL;
 		<link rel="stylesheet" href="CSS/dashboard.css">
 		<link rel="stylesheet" type="text/css" href="CSS/pure-release-0.6.0/pure-min.css">
 		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></link>
-	
+
 		<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"> </script>
 		<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 		<script src="CSS/jquery.min.js"></script>
@@ -118,7 +112,6 @@ $message = NULL;
 		                        join gastype gt on c.gasID=gt.gasID
 		                        join cylinderstatus cs on c.cylinderStatusID=cs.cylinderStatusID
 		                " ;
-
 	            	$result = mysqli_query($dbc,$query);
 	            ?>
 
@@ -133,7 +126,7 @@ $message = NULL;
 									<datalist id="statusList">
 										<?php
 											while ($row_status=mysqli_fetch_array($result_statusList, MYSQLI_ASSOC)) {
-												echo "<option value=\"{$row_status['cylinderStatusDescription']}\">"; 
+												echo "<option value=\"{$row_status['cylinderStatusDescription']}\">";
 											}
 										?>
 									</datalist>
@@ -147,7 +140,7 @@ $message = NULL;
 						</div>
 					</form>
 				</div>
-					
+
 			</div>
 		</div>
 	</body>
@@ -174,7 +167,6 @@ $message = NULL;
 	                'select-status': "Please select a status.",
 	            }
 	        });
-
 	        function removeError(element) {
 	        element.addClass('valid')
 	            .closest('.form-group')
@@ -183,7 +175,7 @@ $message = NULL;
 		})
 	</script>
 
-	<script> 
+	<script>
 	$(document).ready(function(){
 		$('#Table').DataTable({
 			paging: false,
