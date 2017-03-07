@@ -48,8 +48,9 @@
 
 	date_default_timezone_set('Asia/Manila');
 	$timestamp = date("F j, Y, g:i a");
-	require('fpdf.php');
+
 	ob_start();
+	require('fpdf.php');
 
 	class PDF extends FPDF {
 	function Header()
@@ -93,31 +94,21 @@
 
 	//Add first page
 	$pdf->AliasNbPages();
-	$pdf->AddPage('P');
+	$pdf->AddPage();
 
-  $y_axis_initial = 70;
- // //print column titles
- // // $pdf->SetFillColor(232, 232, 232);
- // // $pdf->SetFont('Arial', 'B', 12);
- // $pdf->SetY($y_axis_initial);
- // $pdf->SetX(30);
-
- // $gName=$gasRow['gasType']." ".$gasRow['gasName'];
- $pdf->SetFillColor(256, 256, 256);
- $pdf->SetFont('Arial', 'B', 15);
- // $pdf->Cell(40, 6, $gName, 1, 0, 'L', 1);
- $y_axis=90;
- $row_height = 6;
+ $y_axis_initial = 78;
+ $pdf->SetY($y_axis_initial);
+ $y_axis=80;
+ $row_height = 8;
  $y_axis = $y_axis + $row_height;
- $i = 0;
+ $b = 0;
 
- //Set maximum rows per page
- $max = 30;
+$max = 18;
+
  //Set Row Height
- $row_height = 6;
+ $row_height = 8;
 	//Send file
 	$gasResult = mysqli_query($dbc, getGasNames($_SESSION['select-status']));
-  $pdf->SetY(75);
 	while($gasRow=mysqli_fetch_array($gasResult)){
       $gasCount=mysqli_num_rows($gasResult);
       $cylinderResult = mysqli_query($dbc, getCylinders($_SESSION['select-status'], $gasRow['gasID']));
@@ -129,63 +120,35 @@
       $pdf->SetFont('Arial', 'B', 14);
       $pdf->SetTextColor(0);
       $pdf->Cell(100, 10, $gName, 1, 0, 'C', 1);
-      $pdf->Ln();
+
       while($cylinderRow=mysqli_fetch_array($cylinderResult)){
-          $cylinderList[]=$cylinderRow['cylinderID'];
+          $cylinderList=$cylinderRow['cylinderID'];
+					if($cylinderRow['gasID']=$gasRow['gasID']){
+						if($b==$max){
+							$pdf->AddPage();
+							//print column titles for the current page
+							$pdf->SetY($y_axis_initial);
+							$pdf->SetX(55);
+							$y_axis=78;
+							$row_height = 8;
+							//Go to next row
+							$y_axis = $y_axis + $row_height;
+
+							//Set $i variable to 0 (first row)
+							$b = 0;
+						}
+						$pdf->SetFillColor(255,255,255);
+						$pdf->SetFont('Arial', '', 13);
+						$pdf->SetY($y_axis);
+						$pdf->SetX(55);
+						$pdf->MultiCell(100, 10,$cylinderList, 1, 'C', 1);
+					 	//unset($cylinderList);
+						//Go to next row
+						$y_axis = $y_axis + $row_height;
+						$b= $b + 1;
+					}
         }
-        for ($i = 0; $i < $rowCount;) {
-          for ($j = $i, $counter = 0; $counter < 5; $counter++, $j++) {
-            if ($j < $rowCount){
-              $pdf->SetFillColor(255,255,255);
-              $pdf->SetFont('Arial', '', 13);
-              $pdf->SetTextColor(0);
-              $pdf->SetX(55);
-              $pdf->Cell(100, 7, $cylinderList[$j], 1, 0, 'C', 1);
-              $pdf->Ln();
-            }
-          }
-          $i += 5;
-          if($i==$max){
-            $pdf->AddPage();
-            //print column titles for the current page
-            $pdf->SetY($y_axis_initial);
-            $pdf->SetX(55);
-            // $pdf->Cell(35, 6, 'Gas', 1, 0, 'L', 1);
-            $pdf->SetFillColor(232, 232, 232);
-            $pdf->Cell(100, 10, $gName, 1, 0, 'C', 1);
-            $y_axis=75;
-            $row_height = 6;
-            $pdf->Cell(100, 7, $cylinderList[$j], 1, 0, 'C', 1);
-            //Go to next row
-            $y_axis = $y_axis + $row_height;
-
-            //Set $i variable to 0 (first row)
-            $i = 0;
-          }
-        }
-        unset($cylinderList);
-
-      // if($i==$max){
-      //   $pdf->AddPage();
-      //   //print column titles for the current page
-      //   $pdf->SetY($y_axis_initial);
-      //   $pdf->SetX(90);
-      //   // $pdf->Cell(35, 6, 'Gas', 1, 0, 'L', 1);
-      //   $pdf->SetFillColor(232, 232, 232);
-      //   $pdf->Cell(40, 6, $gName, 1, 0, 'L', 1);
-      //   $y_axis=100;
-      //   $row_height = 6;
-      //   //Go to next row
-      //   $y_axis = $y_axis + $row_height;
-      //
-      //   //Set $i variable to 0 (first row)
-      //   $i = 0;
-      // }
-
-
-      //Go to next row
-      $y_axis = $y_axis + $row_height;
-      $i = $i + 1;
+				$y_axis = $y_axis + $row_height+4;
 	}
   //Send file
   $pdf->Output();
